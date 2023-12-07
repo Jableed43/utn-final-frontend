@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import Characters from "./components/Characters";
+import Paginacion from "./components/Paginacion";
 
 function App() {
-  const [count, setCount] = useState(0)
+  //estado donde guardamos los characters
+  const [characters, setCharacters] = useState([]);
+
+  //estado donde guardamos la pagina proxima y anterior
+  const [info, setInfo] = useState([]);
+
+  //enlace a api
+  const initialUrl = "https://rickandmortyapi.com/api/character";
+
+  //obtengo los personajes
+  function fetchCharacters(url) {
+    //llamado a api (verbo hhtp: get)
+    fetch(url)
+      .then(respuesta => respuesta.json())
+      .then(datos => {
+        setCharacters(datos.results);
+        setInfo(datos.info);
+        console.log(datos.info);
+      })
+      .catch(error => console.log(error));
+  }
+
+  useEffect(() => {
+    fetchCharacters(initialUrl);
+  }, []);
+
+  const retroceder = () => {
+    fetchCharacters(info.prev);
+  };
+
+  const adelantar = () => {
+    fetchCharacters(info.next);
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Paginacion
+        prev={info.prev}
+        next={info.next}
+        adelantar={adelantar}
+        retroceder={retroceder}
+      />
+      <Characters characters={characters} />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

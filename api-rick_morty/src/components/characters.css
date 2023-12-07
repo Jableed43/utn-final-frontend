@@ -1,0 +1,22 @@
+/* card */
+.container-character{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card-character{
+    min-width: 200px;
+    border: 2px solid white;
+    margin: 10px;
+  }
+
+li{
+    list-style: none;
+}
+
+.nav-button-container{
+    display: flex;
+    width: 300px;
+    flex-direction: row;
+}
