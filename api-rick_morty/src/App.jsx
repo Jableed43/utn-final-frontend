@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import Navbar from "./components/Navbar";
+import Characters from "./components/Characters";
+import Pagination from "./components/Pagination";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [characters, setCharacters] = useState([]);
+  const [info, setInfo] = useState({});
+
+  const initialUrl = "https://rickandmortyapi.com/api/character";
+
+  const fetchCharacters = url => {
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        setCharacters(data.results);
+        setInfo(data.info);
+      })
+      .catch(error => console.log(error));
+  };
+
+  const onPrevious = () => {
+    fetchCharacters(info.prev);
+  };
+
+  const onNext = () => {
+    fetchCharacters(info.next);
+  };
+
+  useEffect(() => {
+    fetchCharacters(initialUrl);
+  }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <Navbar brand="Rick and Morty App" />
+
+      <div className="container mt-5">
+        <Pagination
+          prev={info.prev}
+          next={info.next}
+          onPrevious={onPrevious}
+          onNext={onNext}
+        />
+        <Characters characters={characters} />
+        <Pagination
+          prev={info.prev}
+          next={info.next}
+          onPrevious={onPrevious}
+          onNext={onNext}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
